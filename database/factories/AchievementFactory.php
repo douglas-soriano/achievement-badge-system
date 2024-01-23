@@ -26,7 +26,7 @@ class AchievementFactory extends Factory
     {
         return [
             'name' => $this->faker->sentence,
-            'category' => $this->faker->randomElement(['lessons', 'comments'])
+            'category' => $this->faker->randomElement(['lessons', 'comments']),
             'code_name' => Str::snake($this->faker->sentence),
             'description' => $this->faker->paragraph,
         ];

@@ -2,34 +2,34 @@
 
 namespace Tests\Feature;
 
-use App\Events\LessonWatched;
+use App\Events\CommentWritten;
 use App\Models\Achievement;
-use App\Models\Lesson;
+use App\Models\Comment;
 use App\Models\User;
 use Tests\TestCase;
 
-class LessonAchievementsTest extends TestCase
+class CommentAchievementsTest extends TestCase
 {
+    protected $fake_comment = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
     /**
-     * Test to trigger the first lesson watched achievement.
+     * Test to trigger the first comment written achievement.
      */
     /** @test */
-    public function first_lesson_watched_achievement_unlocks_on_watching_first_lesson() : void
+    public function first_comment_written_achievement_unlocks_on_writing_first_comment() : void
     {
         // Refresh tables
-        $this->refreshSpecificTables(['users', 'lesson_user', 'user_achievements', 'user_badges']);
+        $this->refreshSpecificTables(['users', 'comments', 'user_achievements', 'user_badges']);
 
         // Create a user and achievement
         $user = User::factory()->create();
-        $achievement = Achievement::where('code_name', 'first_lesson_watched')->first();
+        $achievement = Achievement::where('code_name', 'first_comment_written')->first();
 
         // Assert that the user doesn't have the achievement yet
         $this->assertEmpty($user->achievements);
 
-        // Create a lesson and simulate watching it
-        $lesson = Lesson::inRandomOrder()->first();
-        $user->watchLesson($lesson);
+        // Create a comment and simulate writing it
+        $user->sendComment($this->fake_comment);
 
         // Refresh the user to ensure achievements are updated
         $user->refresh();
@@ -40,16 +40,16 @@ class LessonAchievementsTest extends TestCase
     }
 
     /**
-     * Test to trigger the [5, 10, 25, 50] lesson watched achievements.
+     * Test to trigger the [3, 5, 10, 20] comment written achievements.
      */
     /** @test */
-    public function unlock_achievements_unlocks_after_watching_n_lessons()
+    public function unlock_achievements_unlocks_after_writing_n_comments()
     {
         // Milestones to test
-        $milestones_to_test = [5, 10, 25, 50];
+        $milestones_to_test = [3, 5, 10, 20];
 
         // Refresh tables
-        $this->refreshSpecificTables(['users', 'lesson_user', 'user_achievements', 'user_badges']);
+        $this->refreshSpecificTables(['users', 'comments', 'user_achievements', 'user_badges']);
 
         // Create a user and achievement
         $user = User::factory()->create();
@@ -58,18 +58,17 @@ class LessonAchievementsTest extends TestCase
         $this->assertEmpty($user->achievements);
 
         // Test for each milestone
-        $lessons_count = 1;
-        foreach ($milestones_to_test as $min_lessons_count) {
+        $comments_count = 1;
+        foreach ($milestones_to_test as $min_comments_count) {
             // Get the achievement
-            $achievement = Achievement::where('code_name', $min_lessons_count . '_lessons_watched')->first();
+            $achievement = Achievement::where('code_name', $min_comments_count . '_comments_written')->first();
             if ($achievement) {
-                // Create and "watch" five lessons
-                for ($i = $lessons_count; $i <= $min_lessons_count; $i++) {
-                    // Create a lesson and simulate watching it
-                    $lesson = Lesson::inRandomOrder()->first();
-                    $user->watchLesson($lesson);
-                    // Increment count so we continue on creating lessons
-                    $lessons_count = $i;
+                // Create and "watch" five comments
+                for ($i = $comments_count; $i <= $min_comments_count; $i++) {
+                    // Create a comment and simulate writing it
+                    $user->sendComment($this->fake_comment);
+                    // Increment count so we continue on creating comments
+                    $comments_count = $i;
                 }
 
                 // Refresh the user to ensure achievements are updated
@@ -90,34 +89,33 @@ class LessonAchievementsTest extends TestCase
     /** @test */
     public function multiple_requirements_achievement_unlocks_on_meeting_all_requirements()
     {
-        $this->refreshSpecificTables(['users', 'lesson_user', 'user_achievements', 'user_badges']);
+        $this->refreshSpecificTables(['users', 'comments', 'user_achievements', 'user_badges']);
 
         // Create a user, achievement, and requirements
         $user = User::factory()->create();
         $achievement = Achievement::factory()->create([
-            'name' => 'Master Learner!',
-            'code_name' => 'master_learner',
-            'category' => 'lessons',
-            'description' => 'You\'re a master learner! Watched 5 lessons in the category Advanced!'
+            'name' => 'Master Writer!',
+            'code_name' => 'master_writer',
+            'category' => 'comments',
+            'description' => 'You\'re a master writer! Wrote 5 long comments!'
         ]);
         $achievement->requirements()->createMany([
             [
-                'type' => 'total_lessons_watched',
+                'type' => 'total_comments',
                 'value' => 5,
             ], [
-                'type' => 'lesson_category',
-                'value' => 5, // fake category ID we created on AchievementService @ meetsLessonAchievementRequirements
+                'type' => 'comment_length',
+                'value' => 200,
             ],
         ]);
 
         // Assert that the user doesn't have the achievement yet
         $this->assertEmpty($user->achievements);
 
-        // Watch several lessons, including some from the specific category
+        // Write several comments
         for ($i = 0; $i < 7; $i++) {
-            // Create a lesson and simulate watching it
-            $lesson = Lesson::inRandomOrder()->first();
-            $user->watchLesson($lesson);
+            // Create a comment and simulate writing it
+            $user->sendComment($this->fake_comment . " " . $this->fake_comment);
         }
 
         // Refresh the user to ensure achievements are updated
@@ -127,8 +125,7 @@ class LessonAchievementsTest extends TestCase
         $this->assertTrue($user->achievements->contains($achievement));
 
         // Delete created achievement
-        $achievement->requirements()->delete();
-        $achievement->delete();
+        \DB::delete("DELETE FROM achievements WHERE code_name = 'master_writer'");
     }
 
     /**

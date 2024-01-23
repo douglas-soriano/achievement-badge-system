@@ -2,13 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\CommentWritten;
+use App\Events\LessonWatched;
+use App\Listeners\CommentWrittenListener;
+use App\Listeners\LessonWatchedListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-
-use App\Listeners\CommentWrittenListener;
-use App\Listeners\LessonWatchedListener;
 
 class EventServiceProvider extends ServiceProvider
 {

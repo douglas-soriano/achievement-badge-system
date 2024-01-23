@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\AchievementUnlocked;
 use App\Models\Achievement;
 use App\Models\Comment;
 use App\Models\Lesson;
@@ -19,22 +18,22 @@ class AchievementService
         $this->badgeService = $badgeService;
     }
 
-    /* *
-     *
-     * */
+    /**
+    * Checks for and unlocks achievements related to lesson watching.
+    **/
     public function checkForLessonWatchAchievements(User $user, Lesson $lesson): void
     {
+        // Get achievements IDs that the user already have unlocked
+        $user_unlocked_achievements = $user->achievements()->where('category', 'lessons')->pluck('achievements.id')->toArray();
+
         // Fetch relevant achievements for lesson watching
-        $lesson_achievements = Achievement::where('category', 'lessons')->get();
+        $lesson_achievements = Achievement::where('category', 'lessons')->whereNotIn('id', $user_unlocked_achievements)->get();
 
         foreach ($lesson_achievements as $achievement) {
             // Check achievement criteria based on lesson data
             if ($this->meetsLessonAchievementRequirements($achievement, $user, $lesson)) {
                 // Unlock achievement for user
-                $user->achievements()->attach($achievement);
-
-                // Fire AchievementUnlocked event
-                event(new AchievementUnlocked(['achievement_name' => $achievement->name, 'user' => $user]));
+                $user->unlockAchievement($achievement);
 
                 // Check for potential badge unlocks
                 $this->badgeService->checkForBadgeUnlocks($user);
@@ -42,9 +41,9 @@ class AchievementService
         }
     }
 
-    /* *
-     * Helper method to encapsulate achievement criteria logic
-     * */
+    /**
+    * Helper method to encapsulate achievement criteria logic.
+    **/
     private function meetsLessonAchievementRequirements(Achievement $achievement, User $user, Lesson $lesson): bool
     {
         // Access achievement requirements
@@ -56,19 +55,18 @@ class AchievementService
 
                 case 'total_lessons_watched':
                     if ($user->lessons()->count() < $requirement->value) {
-                        return ($user->lessons()->count() < $requirement->value); // Fail early if lesson count doesn't meet requirement
+                        return false; // Fail early if lesson count doesn't meet requirement
                     }
                     break;
 
                 //
                 // Example for others achievements type
-                /*
                 case 'lesson_category':
-                    if ($lesson->category->id !== $requirement->value) {
+                    $fake_lesson_category = 5;
+                    if ($fake_lesson_category !== $requirement->value) {
                         return false;
                     }
                     break;
-                */
 
                 default:
                     return false; // Treat unknown requirement types as not met
@@ -79,22 +77,22 @@ class AchievementService
         return true;
     }
 
-    /* *
-     *
-     * */
+    /**
+    * Checks for and unlocks achievements related to comment writing.
+    **/
     public function checkForCommentWriteAchievements(User $user, Comment $comment): void
     {
+        // Get achievements IDs that the user already have unlocked
+        $user_unlocked_achievements = $user->achievements()->where('category', 'comments')->pluck('achievements.id')->toArray();
+
         // Fetch relevant achievements for comment writing
-        $comment_achievements = Achievement::where('category', 'comments')->get();
+        $comment_achievements = Achievement::where('category', 'comments')->whereNotIn('id', $user_unlocked_achievements)->get();
 
         foreach ($comment_achievements as $achievement) {
             // Check achievement criteria based on comment data
             if ($this->meetsCommentAchievementRequirements($achievement, $user, $comment)) {
                 // Unlock achievement for user
-                $user->achievements()->attach($achievement);
-
-                // Fire AchievementUnlocked event
-                event(new AchievementUnlocked(['achievement_name' => $achievement->name, 'user' => $user]));
+                $user->unlockAchievement($achievement);
 
                 // Check for potential badge unlocks
                 $this->badgeService->checkForBadgeUnlocks($user);
@@ -121,13 +119,11 @@ class AchievementService
                     break;
 
                 // Example of others comments achievements types
-                /*
                 case 'comment_length':
                     if (strlen($comment->body) < $requirement->value) {
                         return false;
                     }
                     break;
-                */
 
                 default:
                     return false; // Treat unknown requirement types as not met
@@ -138,9 +134,9 @@ class AchievementService
         return true;
     }
 
-    /* *
-     *
-     * */
+    /**
+    * Retrieves the achievement related information to the controller.
+    **/
     public function getUserAchievements(User $user): array
     {
         // Get unlocked achievements and next available ones
@@ -164,9 +160,9 @@ class AchievementService
         ];
     }
 
-    /* *
-     *
-     * */
+    /**
+    * Retrieves the next available achievements for a user, grouped by category.
+    **/
     public function getNextAvailableAchievements(User $user): Collection
     {
         // Get all possible achievements
@@ -174,7 +170,7 @@ class AchievementService
 
         // Filter out already unlocked achievements
         $available_achievements = $all_achievements->filter(function ($achievement) use ($user) {
-            return !($user->achievements && $user->achievements->contains($achievement));
+            return !$user->hasAchievement($achievement);
         });
 
         // Sort available achievements based on requirement types and categories
