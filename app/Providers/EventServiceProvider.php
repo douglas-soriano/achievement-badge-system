@@ -7,6 +7,9 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
+use App\Listeners\CommentWrittenListener;
+use App\Listeners\LessonWatchedListener;
+
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -17,6 +20,16 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+
+        // Listen to the "LessonWatched" event fired when a user watches a lesson.
+        LessonWatched::class => [
+            LessonWatchedListener::class
+        ],
+
+        // Listen to the "CommentWritten" event fired when a user writes a comment.
+        CommentWritten::class => [
+            CommentWrittenListener::class
         ],
     ];
 
