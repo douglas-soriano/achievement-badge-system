@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Events\BadgeUnlocked;
 use App\Models\Badge;
+use App\Models\User;
 
 class BadgeService
 {
@@ -12,7 +13,7 @@ class BadgeService
     **/
     public function getCurrentBadge(User $user): ?Badge
     {
-        $current_achievement_count = $user->achievements->count();
+        $current_achievement_count = $user->achievements ? $user->achievements->count() : 0;
         return Badge::where('minimum_achievements_count', '<=', $current_achievement_count)->orderBy('minimum_achievements_count', 'desc')->first();
     }
 
@@ -21,7 +22,7 @@ class BadgeService
     **/
     public function getNextBadge(User $user): ?Badge
     {
-        $current_achievement_count = $user->achievements->count();
+        $current_achievement_count = $user->achievements ? $user->achievements->count() : 0;
         return Badge::where('minimum_achievements_count', '>', $current_achievement_count)->orderBy('minimum_achievements_count', 'asc')->first();
     }
 
@@ -30,8 +31,9 @@ class BadgeService
     **/
     public function getRemainingToUnlockNextBadge(User $user): int
     {
+        $current_achievement_count = $user->achievements ? $user->achievements->count() : 0;
         $next_badge = $this->getNextBadge($user);
-        return $next_badge ? $next_badge->minimum_achievements_count - $user->achievements->count() : 0;
+        return $next_badge ? $next_badge->minimum_achievements_count - $current_achievement_count : 0;
     }
 
     /**
@@ -40,7 +42,7 @@ class BadgeService
     public function checkForBadgeUnlocks(User $user): void
     {
         // Get the user's current badge count
-        $current_achievement_count = $user->achievements()->count();
+        $current_achievement_count = $user->achievements ? $user->achievements->count() : 0;
 
         // Find the first badge with minimum_achievements_count greater than the current count
         $next_badge = Badge::where('minimum_achievements_count', '>', $current_achievement_count)->orderBy('minimum_achievements_count', 'asc')->first();

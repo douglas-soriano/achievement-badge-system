@@ -6,7 +6,9 @@ use App\Events\AchievementUnlocked;
 use App\Models\Achievement;
 use App\Models\Comment;
 use App\Models\Lesson;
+use App\Models\User;
 use App\Services\BadgeService;
+use Illuminate\Support\Collection;
 
 class AchievementService
 {
@@ -142,17 +144,19 @@ class AchievementService
     public function getUserAchievements(User $user): array
     {
         // Get unlocked achievements and next available ones
-        $unlocked_achievements = $user->achievements;
+        $unlocked_achievements = $user->achievements ? $user->achievements->pluck('name') : null;
         $next_available_achievements = $this->getNextAvailableAchievements($user);
 
         // Get badge information
         $current_badge = $this->badgeService->getCurrentBadge($user);
+        $current_badge = $current_badge ? $current_badge->name : null;
         $next_badge = $this->badgeService->getNextBadge($user);
+        $next_badge = $next_badge ? $next_badge->name : null;
         $remaining_to_unlock_next_badge = $this->badgeService->getRemainingToUnlockNextBadge($user);
 
         // Format data for response
         return [
-            'unlocked_achievements' => $unlocked_achievements->pluck('name'),
+            'unlocked_achievements' => $unlocked_achievements,
             'next_available_achievements' => $next_available_achievements->map->name,
             'current_badge' => $current_badge,
             'next_badge' => $next_badge,
@@ -170,7 +174,7 @@ class AchievementService
 
         // Filter out already unlocked achievements
         $available_achievements = $all_achievements->filter(function ($achievement) use ($user) {
-            return !$user->achievements->contains($achievement);
+            return !($user->achievements && $user->achievements->contains($achievement));
         });
 
         // Sort available achievements based on requirement types and categories

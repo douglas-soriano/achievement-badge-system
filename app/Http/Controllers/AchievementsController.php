@@ -19,9 +19,9 @@ class AchievementsController extends Controller
     public function index(User $user)
     {
         // Delegate logic to AchievementService
-        $achievementData = $this->achievementService->getUserAchievements($user);
+        $achievement_data = $this->achievementService->getUserAchievements($user);
 
         // Return JSON response with achievement data
-        return new UserAchievementResource($achievementData);
+        return new UserAchievementResource($achievement_data);
     }
 }
