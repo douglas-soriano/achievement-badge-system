@@ -59,7 +59,7 @@ class User extends Authenticatable
     /**
      * The comments that belong to the user.
      */
-    public function comments() : hasMany
+    public function comments(): hasMany
     {
         return $this->hasMany(Comment::class);
     }
@@ -67,7 +67,7 @@ class User extends Authenticatable
     /**
      * The lessons that a user has access to.
      */
-    public function lessons() : belongsToMany
+    public function lessons(): belongsToMany
     {
         return $this->belongsToMany(Lesson::class);
     }
@@ -75,7 +75,7 @@ class User extends Authenticatable
     /**
      * The lessons that a user has watched.
      */
-    public function watched() : belongsToMany
+    public function watched(): belongsToMany
     {
         return $this->belongsToMany(Lesson::class)->wherePivot('watched', true);
     }
@@ -83,7 +83,7 @@ class User extends Authenticatable
     /**
      * The achievements unlocked by this user.
      */
-    public function achievements() : hasManyThrough
+    public function achievements(): hasManyThrough
     {
         return $this->hasManyThrough(Achievement::class, UserAchievement::class, 'user_id', 'id', 'id', 'achievement_id');
     }
@@ -91,7 +91,7 @@ class User extends Authenticatable
     /**
      * The badges unlocked by this user.
      */
-    public function badges() : hasManyThrough
+    public function badges(): hasManyThrough
     {
         return $this->hasManyThrough(Badge::class, UserBadge::class, 'user_id', 'id', 'id', 'badge_id');
     }
@@ -109,7 +109,7 @@ class User extends Authenticatable
     /**
      * Unlock achievement for user and fire event.
      */
-    public function unlockAchievement(Achievement $achievement) : void
+    public function unlockAchievement(Achievement $achievement): void
     {
         // Check if the user already has the achievement
         if (!$this->hasAchievement($achievement, $disable_cache=true)) {
@@ -137,7 +137,7 @@ class User extends Authenticatable
     /**
      * Unlock badge for user and fire event.
      */
-    public function unlockBadge(Badge $badge) : void
+    public function unlockBadge(Badge $badge): void
     {
         // Check if the user already has the badge
         if (!$this->hasBadge($badge)) {
@@ -155,19 +155,19 @@ class User extends Authenticatable
     /**
      * Register lesson to user and fire event.
      */
-    public function watchLesson(Lesson $lesson) : void
+    public function watchLesson(Lesson $lesson): void
     {
         // Mark it as "watched" by the user
         $this->lessons()->attach($lesson, ['watched' => 1]);
 
-        // Dispatch the event simulating lesson watching
+        // Dispatch the event for lesson watched
         event(new LessonWatched($lesson, $this));
     }
 
     /**
      * Add comment to user and fire event.
      */
-    public function sendComment(string $message) : void
+    public function sendComment(string $message): void
     {
         // Mark it as written by the user
         $comment = new Comment([

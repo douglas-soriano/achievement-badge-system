@@ -15,7 +15,7 @@ class LessonAchievementsTest extends TestCase
      * Test to trigger the first lesson watched achievement.
      */
     /** @test */
-    public function first_lesson_watched_achievement_unlocks_on_watching_first_lesson() : void
+    public function first_lesson_watched_achievement_unlocks_on_watching_first_lesson(): void
     {
         // Refresh tables
         $this->refreshSpecificTables(['users', 'lesson_user', 'user_achievements', 'user_badges']);
@@ -43,7 +43,7 @@ class LessonAchievementsTest extends TestCase
      * Test to trigger the [5, 10, 25, 50] lesson watched achievements.
      */
     /** @test */
-    public function unlock_achievements_unlocks_after_watching_n_lessons()
+    public function unlock_achievements_unlocks_after_watching_n_lessons(): void
     {
         // Milestones to test
         $milestones_to_test = [5, 10, 25, 50];
@@ -88,7 +88,7 @@ class LessonAchievementsTest extends TestCase
      * Test achievements with multiple requirements to be unlocked.
      */
     /** @test */
-    public function multiple_requirements_achievement_unlocks_on_meeting_all_requirements()
+    public function multiple_requirements_achievement_unlocks_on_meeting_all_requirements(): void
     {
         $this->refreshSpecificTables(['users', 'lesson_user', 'user_achievements', 'user_badges']);
 
@@ -134,7 +134,7 @@ class LessonAchievementsTest extends TestCase
     /**
      * HELPER :: Refresh specific tables.
      */
-    public function refreshSpecificTables($tables = []) : void
+    public function refreshSpecificTables($tables = []): void
     {
         foreach ($tables as $table) \DB::table($table)->truncate();
     }

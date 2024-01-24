@@ -13,10 +13,10 @@ class CommentAchievementsTest extends TestCase
     protected $fake_comment = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
     /**
-     * Test to trigger the first comment written achievement.
-     */
+    * Test to trigger the first comment written achievement.
+    */
     /** @test */
-    public function first_comment_written_achievement_unlocks_on_writing_first_comment() : void
+    public function first_comment_written_achievement_unlocks_on_writing_first_comment(): void
     {
         // Refresh tables
         $this->refreshSpecificTables(['users', 'comments', 'user_achievements', 'user_badges']);
@@ -40,10 +40,10 @@ class CommentAchievementsTest extends TestCase
     }
 
     /**
-     * Test to trigger the [3, 5, 10, 20] comment written achievements.
-     */
+    * Test to trigger the [3, 5, 10, 20] comment written achievements.
+    */
     /** @test */
-    public function unlock_achievements_unlocks_after_writing_n_comments()
+    public function unlock_achievements_unlocks_after_writing_n_comments(): void
     {
         // Milestones to test
         $milestones_to_test = [3, 5, 10, 20];
@@ -84,10 +84,10 @@ class CommentAchievementsTest extends TestCase
     }
 
     /**
-     * Test achievements with multiple requirements to be unlocked.
-     */
+    * Test achievements with multiple requirements to be unlocked.
+    */
     /** @test */
-    public function multiple_requirements_achievement_unlocks_on_meeting_all_requirements()
+    public function multiple_requirements_achievement_unlocks_on_meeting_all_requirements(): void
     {
         $this->refreshSpecificTables(['users', 'comments', 'user_achievements', 'user_badges']);
 
@@ -129,9 +129,9 @@ class CommentAchievementsTest extends TestCase
     }
 
     /**
-     * HELPER :: Refresh specific tables.
-     */
-    public function refreshSpecificTables($tables = []) : void
+    * HELPER :: Refresh specific tables.
+    */
+    public function refreshSpecificTables($tables = []): void
     {
         foreach ($tables as $table) \DB::table($table)->truncate();
     }

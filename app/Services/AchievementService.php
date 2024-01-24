@@ -29,14 +29,16 @@ class AchievementService
         // Fetch relevant achievements for lesson watching
         $lesson_achievements = Achievement::where('category', 'lessons')->whereNotIn('id', $user_unlocked_achievements)->get();
 
-        foreach ($lesson_achievements as $achievement) {
-            // Check achievement criteria based on lesson data
-            if ($this->meetsLessonAchievementRequirements($achievement, $user, $lesson)) {
-                // Unlock achievement for user
-                $user->unlockAchievement($achievement);
+        if ($lesson_achievements) {
+            foreach ($lesson_achievements as $achievement) {
+                // Check achievement criteria based on lesson data
+                if ($this->meetsLessonAchievementRequirements($achievement, $user, $lesson)) {
+                    // Unlock achievement for user
+                    $user->unlockAchievement($achievement);
 
-                // Check for potential badge unlocks
-                $this->badgeService->checkForBadgeUnlocks($user);
+                    // Check for potential badge unlocks
+                    $this->badgeService->checkForBadgeUnlocks($user);
+                }
             }
         }
     }
@@ -50,26 +52,27 @@ class AchievementService
         $requirements = $achievement->requirements;
 
         // Check if all requirements are met
-        foreach ($requirements as $requirement) {
-            switch ($requirement->type) {
+        if ($requirements) {
+            foreach ($requirements as $requirement) {
+                switch ($requirement->type) {
 
-                case 'total_lessons_watched':
-                    if ($user->lessons()->count() < $requirement->value) {
-                        return false; // Fail early if lesson count doesn't meet requirement
-                    }
-                    break;
+                    case 'total_lessons_watched':
+                        if ($user->watched()->count() < $requirement->value) {
+                            return false; // Fail early if lesson count doesn't meet requirement
+                        }
+                        break;
 
-                //
-                // Example for others achievements type
-                case 'lesson_category':
-                    $fake_lesson_category = 5;
-                    if ($fake_lesson_category !== $requirement->value) {
-                        return false;
-                    }
-                    break;
+                    // Example for others achievements type
+                    case 'lesson_category':
+                        $fake_lesson_category = 5; // Fake ID for testing purposes
+                        if ($fake_lesson_category !== $requirement->value) {
+                            return false;
+                        }
+                        break;
 
-                default:
-                    return false; // Treat unknown requirement types as not met
+                    default:
+                        return false; // Treat unknown requirement types as not met
+                }
             }
         }
 
@@ -88,14 +91,16 @@ class AchievementService
         // Fetch relevant achievements for comment writing
         $comment_achievements = Achievement::where('category', 'comments')->whereNotIn('id', $user_unlocked_achievements)->get();
 
-        foreach ($comment_achievements as $achievement) {
-            // Check achievement criteria based on comment data
-            if ($this->meetsCommentAchievementRequirements($achievement, $user, $comment)) {
-                // Unlock achievement for user
-                $user->unlockAchievement($achievement);
+        if ($comment_achievements) {
+            foreach ($comment_achievements as $achievement) {
+                // Check achievement criteria based on comment data
+                if ($this->meetsCommentAchievementRequirements($achievement, $user, $comment)) {
+                    // Unlock achievement for user
+                    $user->unlockAchievement($achievement);
 
-                // Check for potential badge unlocks
-                $this->badgeService->checkForBadgeUnlocks($user);
+                    // Check for potential badge unlocks
+                    $this->badgeService->checkForBadgeUnlocks($user);
+                }
             }
         }
     }
@@ -109,24 +114,26 @@ class AchievementService
         $requirements = $achievement->requirements;
 
         // Check if all requirements are met
-        foreach ($requirements as $requirement) {
-            switch ($requirement->type) {
+        if ($requirements) {
+            foreach ($requirements as $requirement) {
+                switch ($requirement->type) {
 
-                case 'total_comments':
-                    if ($user->comments()->count() < $requirement->value) {
-                        return false; // Fail early if comment count doesn't meet requirement
-                    }
-                    break;
+                    case 'total_comments':
+                        if ($user->comments()->count() < $requirement->value) {
+                            return false; // Fail early if comment count doesn't meet requirement
+                        }
+                        break;
 
-                // Example of others comments achievements types
-                case 'comment_length':
-                    if (strlen($comment->body) < $requirement->value) {
-                        return false;
-                    }
-                    break;
+                    // Example of others comments achievements types
+                    case 'comment_length':
+                        if (strlen($comment->body) < $requirement->value) {
+                            return false;
+                        }
+                        break;
 
-                default:
-                    return false; // Treat unknown requirement types as not met
+                    default:
+                        return false; // Treat unknown requirement types as not met
+                }
             }
         }
 
@@ -137,7 +144,7 @@ class AchievementService
     /**
     * Retrieves the achievement related information to the controller.
     **/
-    public function getUserAchievements(User $user): array
+    public function getUserAchievements(User $user): object
     {
         // Get unlocked achievements and next available ones
         $unlocked_achievements = $user->achievements ? $user->achievements->pluck('name') : null;
@@ -151,7 +158,7 @@ class AchievementService
         $remaining_to_unlock_next_badge = $this->badgeService->getRemainingToUnlockNextBadge($user);
 
         // Format data for response
-        return [
+        return (object) [
             'unlocked_achievements' => $unlocked_achievements,
             'next_available_achievements' => $next_available_achievements->map->name,
             'current_badge' => $current_badge,

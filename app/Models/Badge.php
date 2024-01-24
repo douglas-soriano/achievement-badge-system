@@ -26,7 +26,7 @@ class Badge extends Model
     /**
      * Users that has this badge
      */
-    public function users() : hasManyThrough
+    public function users(): hasManyThrough
     {
         return $this->hasManyThrough(User::class, UserBadge::class, 'badge_id', 'user_id');
     }
