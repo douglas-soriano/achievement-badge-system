@@ -28,6 +28,9 @@ class AppRefresh extends Command
     {
         $this->line('Refreshing application...');
 
+        $this->info('Generating application key...');
+        Artisan::call('key:generate');
+
         $this->info('Clearing database...');
         Artisan::call('migrate:reset');
 

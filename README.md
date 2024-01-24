@@ -1,66 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Assessment: Achievement and Badge System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project implements an achievement and badge system for a hypothetical learning platform. Users can earn achievements based on their actions and progress, and they can unlock badges as they accumulate achievements.
 
-## About Laravel
+**Requirements:**
+*```PHP >= 8.1```  is required, and you need to have a created ```database```. Also, dont forget to update your ```composer```.*
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Purpose:
 
-## Learning Laravel
+The goal of this assessment was to create a well-structured and flexible achievement and badge system that can easily be scalable and support multiples achievements and badges.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
+## Installation:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+**1. Clone the repository:**
+```
+git clone https://github.com/douglas-soriano/achievement-badge-system.git .
+```
 
-### Premium Partners
+**2. Install dependencies:**
+```
+composer install
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+**3. Configure environment variables:**
+```
+cp .env.example .env
+```
 
-## Contributing
+Configure the DB variables: DB_DATABASE, DB_USERNAME, DB_PASSWORD.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**4. Install the application:**
+```
+php artisan app:refresh
+```
 
-## Code of Conduct
+This command will clear the database, run migrations, and populate it with initial data.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Achievements and Badges
 
-## License
+The system currently offers several achievements and badges to motivate users and recognize their progress.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Achievements:**
+
+| Achievement | Message |   Code |
+| ----------- | ------- | ---- |
+| ***Lessons*** |  |     |
+| First Lesson Watched | Congratulations on watching your first lesson! | first_lesson_watched |
+| 5 Lessons Watched | Keep learning! You've watched 5 lessons. | 5_lessons_watched |
+| 10 Lessons Watched | You're on a roll! 10 lessons watched already! | 10_lessons_watched |
+| 25 Lessons Watched | Wow, 25 lessons watched! Keep up the good work! | 25_lessons_watched |
+| 50 Lessons Watched | You're a learning machine! 50 lessons watched! | 50_lessons_watched |
+| ***Comments*** |  |    |
+| First Comment Written | Welcome to the community! You wrote your first com... | first_comment_written |
+| 3 Comments Written | You're engaging with the community! 3 comments wri... | 3_comments_written |
+| 5 Comments Written | Keep sharing your thoughts! You've written 5 comme... | 5_comments_written |
+| 10 Comments Written | You're an active community member! 10 comments wri... | 10_comments_written |
+| 20 Comments Written | Wow, you're a community star! 20 comments written! | 20_comments_written |
+
+**Badges:**
+
+| Badge | Message | Achievements to Unlock |
+| ----- | ------- | ------------ |
+| Beginner | Welcome to the learning journey! | 0 |
+| Intermediate | You're making progress! Keep learning and engaging... | 4 |
+| Advanced | You're on a roll! Keep up the impressive learning ... | 8 |
+| Master | Congratulations! You've achieved mastery in learni... | 10 |
+
+
+
+## Main Files:
+
+#### [app/Services/AchievementService.php:](app/Services/AchievementService.php)
+Handles tasks related to achievements, including checking if a user meets requirements, unlocking achievements, and retrieving user achievements.
+
+
+#### [app/Services/BadgeService.php:](app/Services/BadgeService.php)
+Manages badges, including determining user progress towards the next badge, unlocking badges, and retrieving user badge information.
+
+#### [app/Traits/HasAchievementsTrait.php:](app/Traits/HasAchievementsTrait.php)
+This trait provides methods for managing a user's achievements. It includes the relationship, achievements checks, and methods to unlock achievements.
+
+#### [app/Traits/HasBadgesTrait.php:](app/Traits/HasBadgesTrait.php)
+This trait provides methods for managing a user's badges. It includes the relationship, badges checks, and methods to unlock badges.
+
+
+
+## Unlocking Achievements:
+
+Users can unlock achievements by fulfilling specific criteria defined for each achievement. These criteria could involve actions like completing lessons or writing comments. The `AchievementService` handles checking if a user meets the requirements and updates the user's achievements accordingly.
+
+You can call the `unlockAchievement` method in the `User` model, inherited from `HasAchievementsTrait`.
+
+```
+$user->unlockAchievement(Achievement $achievement));
+```
+
+## Unlocking Badges:
+
+Badges are typically awarded based on accumulated achievements. The `BadgeService` tracks user progress towards badges and automatically unlocks them when the necessary achievements are attained.
+
+You can call the `unlockBadge` method in the `User` model, inherited from `HasBadgesTrait`.
+
+```
+$user->unlockBadge(Badge $badge));
+```
+
+
+## Events:
+
+**CommentWritten:** Fired whenever a new comment is posted. It is used to trigger actions like awarding achievements for writing comments.
+
+**LessonWatched:** Fired whenever a new lesson is watched. It is used to trigger actions like awarding achievements for watching lessons.
+
+**AchievementUnlocked:** Fired whenever a new achievement is unlocked by the user.
+
+**BadgeUnlocked:** Fired whenever a new badge is unlocked by the user.
+
+
+## Testing:
+
+The application includes unit and feature tests to ensure its functionality and correctness. You can run the tests with the following command:
+
+```
+php artisan test
+```
+
+#### Tests Created:
+
+- Unit tests for individual services (AchievementService and BadgeService).
+- Feature tests for user achievement and badge interactions (e.g., checking /users/1/achievements endpoint).
+- Test for events and its handling (CommentWritten and LessonWatched).
+- Checking for each achievement requirements, including multiple requirements.
